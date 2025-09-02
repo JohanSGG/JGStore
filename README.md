@@ -1,0 +1,2 @@
+JGStore es una plataforma de comercio electrónico orientada a la compra y venta de productos a través de la web. Su frontend, construido con HTML5, CSS3 y JavaScript, ofrece una experiencia de usuario responsiva que facilita la navegación por catálogos, la gestión de carritos de compra y un proceso de checkout intuitivo. El proyecto incorpora un control de versiones con Git y GitHub para coordinar el trabajo en equipo, mantener un historial detallado de cambios y automatizar despliegues seguros mediante CI/CD.
+
