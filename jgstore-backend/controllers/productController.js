@@ -46,6 +46,6 @@ exports.deleteProduct = async (req, res) => {
     }
 };
 
-// ... Las funciones getAllProducts y getProductById no necesitan cambios ...
+
 exports.getAllProducts = async (req, res) => { /* ... */ };
 exports.getProductById = async (req, res) => { /* ... */ };

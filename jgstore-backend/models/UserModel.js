@@ -3,11 +3,8 @@ const db = require('../config/db');
 
 class User {
     static async create(newUser) {
-        // --- PRUEBA DE FUEGO ---
-        // Si ves estos mensajes en la terminal, significa que estás ejecutando el código nuevo.
         console.log("--- EJECUTANDO UserModel.create (VERSIÓN DEFINITIVA) ---");
         console.log("Datos recibidos para crear en la base de datos:", newUser);
-        // --- FIN DE LA PRUEBA DE FUEGO ---
 
         const { nombre, apellido, email, password, role, storeName } = newUser;
         const sql = 'INSERT INTO users (nombre, apellido, email, password, role, storeName) VALUES (?, ?, ?, ?, ?, ?)';

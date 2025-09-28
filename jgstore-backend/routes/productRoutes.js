@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
-// Aquí es donde ocurría tu error. Ahora sí encontrará el archivo.
 const { protect, isSeller } = require('../middleware/authMiddleware');
 
 // Rutas Públicas (cualquiera puede ver los productos)

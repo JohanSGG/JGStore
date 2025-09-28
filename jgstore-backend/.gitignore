@@ -1,9 +1,10 @@
-# Ignorar dependencias de Node
+# Dependencias de Node.js
 node_modules
 
-# Ignorar el archivo de variables de entorno (¡nunca subir contraseñas!)
+# Archivo de variables de entorno (¡Nunca subir contraseñas!)
 .env
 
-# Archivos de log
-npm-debug.log
+# Logs y archivos de sistema
+npm-debug.log*
+.DS_Store
 

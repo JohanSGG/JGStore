@@ -4,29 +4,21 @@ const db = require('../config/db');
 class User {
     // Método para crear un nuevo usuario
     static async create(newUser) {
-        // ANTES: no se usaban todos los campos que llegaban.
-        // AHORA: desestructuramos todos los campos necesarios del objeto newUser.
         const { nombre, apellido, email, password, role, storeName } = newUser;
-
-        // ANTES: la consulta SQL estaba incompleta.
-        // AHORA: la consulta incluye las columnas 'nombre' y 'apellido'.
         const sql = 'INSERT INTO users (nombre, apellido, email, password, role, storeName) VALUES (?, ?, ?, ?, ?, ?)';
-
-        // ANTES: faltaban valores en el array que se pasa a la base de datos.
-        // AHORA: se pasan todos los valores en el orden correcto.
         const [result] = await db.execute(sql, [nombre, apellido, email, password, role, storeName]);
 
         return { id: result.insertId, ...newUser };
     }
 
-    // Método para encontrar un usuario por su email (sin cambios, pero se incluye por completitud)
+    // Método para encontrar un usuario por su email 
     static async findByEmail(email) {
         const sql = 'SELECT * FROM users WHERE email = ?';
         const [rows] = await db.execute(sql, [email]);
         return rows[0];
     }
 
-    // Método para encontrar un usuario por su ID (sin cambios)
+    // Método para encontrar un usuario por su ID 
     static async findById(id) {
         const sql = 'SELECT id, email, role, storeName, created_at FROM users WHERE id = ?';
         const [rows] = await db.execute(sql, [id]);
