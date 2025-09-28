@@ -1,17 +1,42 @@
 <!DOCTYPE html>
-<html lang="es"><body>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Vendedor - JG STORE</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body id="page-registro-vendedor">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <div id="auth-section" class="navbar-auth"></div>
+            <a class="navbar-brand" href="index.html">✨ JG STORE</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="index.html">INICIO</a>
+                <a class="nav-link" href="productos.html">PRODUCTOS</a>
+                <a class="nav-link" href="rastreo.html">RASTREO</a>
+                <a class="nav-link" id="vender-link" href="beneficios-vendedor.html">VENDER</a>
+            </div>
+        </div>
+    </nav>
     <main class="page-content">
-        <div class="form-container mx-auto">
+        <div class="container-jg text-center">
             <h1 class="page-title">Registro de Vendedor</h1>
+            <p class="page-subtitle">Crea tu cuenta para empezar a vender.</p>
             <form id="seller-registration-form">
-                <div class="form-floating mb-3"><input type="text" class="form-control" id="name" name="name" placeholder="Nombre de tu tienda" required><label for="name">Nombre de tu tienda</label></div>
-                <div class="form-floating mb-3"><input type="email" class="form-control" id="email" name="email" placeholder="Correo electrónico" required><label for="email">Correo electrónico</label></div>
-                <div class="form-floating mb-4"><input type="password" class="form-control" id="pass" name="pass" placeholder="Contraseña" required><label for="pass">Contraseña</label></div>
-                <button type="submit" class="btn-custom w-100">Crear Cuenta de Vendedor</button>
+                <div class="row">
+                    <div class="col-md-6"><input type="text" id="nombre" name="nombre" class="form-input-jg" placeholder="Tu Nombre" required></div>
+                    <div class="col-md-6"><input type="text" id="apellido" name="apellido" class="form-input-jg" placeholder="Tu Apellido" required></div>
+                </div>
+                <input type="text" id="storeName" name="storeName" class="form-input-jg" placeholder="Nombre de tu Tienda" required>
+                <input type="email" id="email" name="email" class="form-input-jg" placeholder="Correo electrónico" required>
+                <input type="password" id="pass" name="pass" class="form-input-jg" placeholder="Contraseña" required>
+                <button type="submit" class="btn btn-primary-jg btn-full">Crear Cuenta de Vendedor</button>
             </form>
+            <a href="login.html" class="form-link-jg">¿Ya eres vendedor? Inicia Sesión</a>
         </div>
     </main>
-    </body>
-</html>
     <script src="js/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
