@@ -1,4 +1,10 @@
-const db = require('../config/db');
+  const sequelize = require('../config/db');
+  const UserModel = require('./User Model');
+  const OrderItemModel = require('./OrderItemModel');  
+  const InvoiceModel = require('./InvoiceModel');     
+  const TransactionModel = require('./TransactionModel');  
+  const TrackingModel = require('./TrackingModel'); 
+  const db = require('../config/db');
 
 class Order {
     static async create(userId, items, shippingAddress) {
@@ -53,6 +59,7 @@ class Order {
         const [rows] = await db.execute(sql, [userId]);
         return rows;
     }
+
 }
 
 module.exports = Order;

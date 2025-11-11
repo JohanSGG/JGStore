@@ -1,1 +1,584 @@
-:root{--color-background:#0d1117;--color-surface:#161b22;--color-border:#30363d;--color-primary:#58a6ff;--color-primary-dark:#3182ce;--color-text-primary:#f0f6fc;--color-text-secondary:#8b949e;--color-success:#238636;--color-error:#da3633}html{scroll-behavior:smooth}body{background-color:var(--color-background);color:var(--color-text-primary);font-family:'Poppins',sans-serif}.page-content{padding-top:8rem;padding-bottom:4rem;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;animation:fadeIn .8s ease-in-out}@keyframes fadeIn{from{opacity:0}to{opacity:1}}.page-title{font-weight:700;margin-bottom:3rem;text-transform:uppercase;letter-spacing:2px}.navbar{background:rgba(13,17,23,.75)!important;backdrop-filter:blur(12px);border-bottom:1px solid var(--color-border)}.navbar-brand,.nav-link{color:var(--color-text-primary)!important;font-weight:500;transition:color .3s ease}.navbar-brand{font-weight:700}.nav-link:hover,.navbar-brand:hover{color:var(--color-primary)!important}#auth-section{display:flex;align-items:center}.user-btn{background:linear-gradient(45deg,var(--color-primary),var(--color-primary-dark));color:#fff!important;border:1px solid var(--color-primary);border-radius:8px;padding:.5rem 1.5rem;font-weight:600;text-decoration:none;transition:all .3s ease}.user-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(88,166,255,.3)}.user-btn-outline{border:1px solid var(--color-primary);color:var(--color-primary)!important;background-color:transparent;border-radius:8px;padding:.5rem 1.5rem;font-weight:600;text-decoration:none;transition:all .3s ease}.user-btn-outline:hover{background-color:var(--color-primary);color:#fff!important}#hero-carousel{height:100vh}.carousel-item{height:100vh;background-size:cover;background-position:center}.carousel-item::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6)}.carousel-caption{bottom:20%}.btn-custom{background:linear-gradient(45deg,var(--color-primary),var(--color-primary-dark));color:#fff;border:1px solid var(--color-primary);border-radius:8px;padding:.8rem 2.5rem;font-weight:600;cursor:pointer;transition:all .3s ease;text-decoration:none;display:inline-block}.btn-custom:hover{transform:translateY(-3px);box-shadow:0 4px 15px rgba(88,166,255,.3)}.product-card{background-color:var(--color-surface);border:1px solid var(--color-border);border-radius:16px;display:flex;flex-direction:column;height:100%;transition:transform .3s ease,box-shadow .3s ease}.product-card:hover{transform:translateY(-8px);box-shadow:0 10px 30px rgba(0,0,0,.3)}.product-image-container{height:180px;display:flex;align-items:center;justify-content:center;padding:1rem}.product-card img{max-height:100%;max-width:100%;object-fit:contain}.product-card-body{padding:1.5rem;display:flex;flex-direction:column;flex-grow:1}.product-card-title{font-size:1.1rem;font-weight:600;min-height:44px;flex-grow:1}.product-price{color:var(--color-primary);font-size:1.25rem;font-weight:700;margin:1rem 0}.cart-container{background-color:var(--color-surface);padding:2rem;border-radius:16px;border:1px solid var(--color-border);width:100%;max-width:800px}.cart-item{display:flex;align-items:center;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--color-border)}.cart-item:last-child{border-bottom:none}.cart-item img{width:70px;height:70px;object-fit:contain;background-color:var(--color-background);border-radius:8px;padding:5px}.cart-item-details{flex-grow:1}.cart-quantity-input{background-color:var(--color-background);border-color:var(--color-border);color:var(--color-text-primary);max-width:75px;text-align:center;border-radius:6px}.cart-item-remove{background:0 0;border:none;color:var(--color-text-secondary);font-size:1.2rem;transition:color .3s ease}.cart-item-remove:hover{color:var(--color-error);cursor:pointer}.btn-pagar{background:var(--color-success)}.seller-product-card{background-color:var(--color-surface);border:1px solid var(--color-border);border-radius:16px;padding:1.5rem;text-align:center;height:100%;display:flex;flex-direction:column}.seller-product-card img{height:100px;object-fit:contain;margin-bottom:1rem}.product-description-snippet{font-size:.9rem;color:var(--color-text-secondary);margin:.5rem 0;flex-grow:1}.stock-info{font-weight:600;color:var(--color-success);margin-top:1rem;border-top:1px solid var(--color-border);padding-top:1rem}.seller-card-actions{margin-top:1.5rem}.toast-notification{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background-color:var(--color-surface);color:var(--color-text-primary);padding:12px 25px;border-radius:8px;border-left:5px solid var(--color-success);box-shadow:0 4px 15px rgba(0,0,0,.3);z-index:10000;transition:transform .5s ease-in-out;font-weight:500}.toast-notification.toast-error{border-left-color:var(--color-error)}.toast-notification.show{transform:translateX(-50%) translateY(0)}
+/* JGStore - styles.css: Tema Azul Muy Oscuro Corregido (Auth Mejorado) - VERSIÓN FINAL FIX */
+
+/* Import Fonts (Poppins) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Variables CSS: Azul Muy Oscuro (Más Intenso) */
+:root {
+    --bg-dark-blue: #0a0e1a !important;     /* Azul MUY oscuro (casi negro con tinte azul - bien oscuro) */
+    --bg-light-blue: #3b82f6;               /* Azul clarito SOLO para botones */
+    --bg-surface: rgba(10, 14, 26, 0.95) !important;  /* Superficie semi-transparente muy oscura */
+    --text-primary: #ffffff !important;     /* Blanco puro para letras (alto contraste) */
+    --text-secondary: #d1d5db;              /* Gris claro para subtítulos/placeholders */
+    --border-color: rgba(59, 130, 246, 0.4) !important;  /* Borde azul sutil */
+    --shadow-hover: 0 6px 20px rgba(59, 130, 246, 0.4) !important;  /* Sombra más pronunciada en hover */
+    --transition: all 0.3s ease;
+    --error-color: #ef4444;
+    --success-color: #10b981;  /* Opcional: Cambia a --bg-light-blue si no quieres verde */
+}
+
+/* Reset y Body: Fuerza Azul Muy Oscuro */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-dark-blue) !important;  /* !important para forzar sobre conflictos */
+    color: var(--text-primary) !important;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Contenido Principal: Fuerza Oscuro */
+.page-content, main, .container {
+    background-color: var(--bg-dark-blue) !important;
+    color: var(--text-primary) !important;
+    padding-top: 8rem;
+    padding-bottom: 4rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Navbar: Muy Oscura Semi-Transparente */
+.navbar {
+    background: rgba(10, 14, 26, 0.95) !important;  /* Más oscuro: casi negro */
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+}
+
+
+.navbar-brand {
+    font-weight: 700;
+    color: var(--text-primary) !important;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+    margin: 0 0.5rem;
+    transition: var(--transition);
+}
+
+.nav-link:hover {
+    color: var(--bg-light-blue) !important;
+}
+
+/* Botones en Navbar: Azul Clarito */
+#auth-section {
+    display: flex;
+    align-items: center;
+}
+
+.user-btn, .btn-primary-jg, .btn-custom {
+    background: linear-gradient(45deg, var(--bg-light-blue), #2563eb);
+    color: var(--text-primary) !important;
+    border: 1px solid var(--bg-light-blue);
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    margin-right: 0.5rem;
+}
+
+.user-btn:hover, .btn-primary-jg:hover, .btn-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    background: linear-gradient(45deg, #2563eb, #1d4ed8);
+}
+
+.user-btn-outline, .btn-outline-jg {
+    border: 1px solid var(--bg-light-blue);
+    color: var(--bg-light-blue) !important;
+    background-color: transparent;
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.user-btn-outline:hover, .btn-outline-jg:hover {
+    background-color: var(--bg-light-blue);
+    color: var(--text-primary) !important;
+    box-shadow: var(--shadow-hover);
+}
+
+/* FORMULARIOS AUTH MEJORADOS: Diseño No Simple (Centrado, Sombra, Inputs Legibles) */
+.auth-container {
+    min-height: 100vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 2rem;
+    background-color: var(--bg-dark-blue) !important;  /* Muy oscuro */
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 450px;
+    background-color: var(--bg-surface) !important;  /* Semi-transparente muy oscura */
+    border-radius: 20px !important;  /* Bordes más redondeados para diseño moderno */
+    padding: 3.5rem 3rem !important;  /* Más padding para "espacioso" */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;  /* Sombra elevada base */
+    border: 1px solid var(--border-color);  /* Borde sutil azul */
+    position: relative;  /* Para efectos */
+    transition: var(--transition);
+}
+
+.auth-box:hover {
+    box-shadow: 0 15px 50px rgba(59, 130, 246, 0.2) !important;  /* Glow sutil en hover caja */
+}
+
+.auth-logo {
+    font-size: 1.8rem;  /* Más grande */
+    font-weight: bold;
+    text-align: center;  /* Centrado */
+    margin-bottom: 2rem;
+    text-decoration: none;
+    color: var(--text-primary) !important;
+    display: block;
+    letter-spacing: 2px;
+}
+
+.auth-title {
+    font-size: 2.5rem !important;  /* Grande pero responsive */
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    color: var(--text-primary) !important;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.auth-input, input[type="text"], input[type="email"], input[type="password"], .form-control {
+    width: 100% !important;
+    background-color: rgba(255, 255, 255, 0.15) !important;  /* Semi-transparente más visible (blanco sobre oscuro) */
+    color: var(--text-primary) !important;  /* Blanco en texto */
+    border: 2px solid var(--border-color) !important;  /* Borde azul más grueso */
+    border-radius: 12px !important;  /* Redondeado */
+    padding: 1.2rem 1.2rem !important;  /* Más padding para "diseño" */
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.auth-input::placeholder, input::placeholder, .form-control::placeholder {
+    color: var(--text-secondary) !important;  /* Gris claro */
+}
+
+.auth-input:focus, input:focus, .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.25) !important;  /* Más claro en focus */
+    border-color: var(--bg-light-blue) !important;
+    box-shadow: 0 0 0 0.3rem rgba(59, 130, 246, 0.3) !important;  /* Glow azul más fuerte */
+    color: var(--text-primary) !important;
+    outline: none;
+}
+
+/* Botones Auth: Azul Clarito, Redondeados, Hover Elevado */
+.auth-button, button[type="submit"] {
+    width: 100% !important;
+    background: linear-gradient(45deg, var(--bg-light-blue), #2563eb) !important;  /* SOLO azul clarito */
+    color: var(--text-primary) !important;  /* Blanco */
+    border: none !important;
+    border-radius: 50px !important;  /* Muy redondeado */
+    padding: 1rem 2.5rem !important;  /* Más alto para diseño */
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    transition: var(--transition);
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);  /* Sombra base */
+}
+
+.auth-button:hover, button[type="submit"]:hover {
+    background: linear-gradient(45deg, #2563eb, #1d4ed8) !important;  /* Azul más oscuro en hover */
+    transform: translateY(-3px) !important;  /* Elevación más pronunciada */
+    box-shadow: var(--shadow-hover) !important;  /* Sombra grande para selección */
+    color: var(--text-primary) !important;
+}
+
+/* Enlaces Auth: Blanco/Gris a Azul */
+.auth-link {
+    display: block;
+    text-align: center;
+    color: var(--text-secondary) !important;
+    text-decoration: none;
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.auth-link:hover, .auth-link strong {
+    color: var(--bg-light-blue) !important;
+    text-decoration: underline;
+}
+
+/* Tarjetas: Oscuras con Hover Sombra */
+product-card, .seller-product-card, .card {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 16px;
+    padding: 2rem !important;  /* Más grande: padding aumentado */
+    display: flex;
+    flex-direction: column;
+    height: 100%;  /* Mantiene flex para adaptación */
+    transition: var(--transition);
+    color: var(--text-primary) !important;
+}
+.product-card:hover, .seller-product-card:hover, .card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    background-color: rgba(10, 14, 26, 1) !important;  /* Más opaco en hover */
+    border-color: var(--bg-light-blue) !important;
+}
+.product-image-container {
+    height: 250px !important;  /* Más alto para imágenes grandes (sin distorsión) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;  /* Padding interno aumentado */
+}
+
+.product-price {
+    color: var(--bg-light-blue) !important;  /* Azul clarito para precios */
+}
+
+.product-card img, .seller-product-card img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;  /* Mantiene proporciones, no crops imágenes */
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+/* Carrito: Items Oscuros */
+.cart-container {
+    background-color: var(--bg-surface) !important;
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    color: var(--text-primary) !important;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    transition: var(--transition);
+    color: var(--text-primary) !important;
+}
+
+.cart-item:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: var(--shadow-hover);
+}
+
+.cart-quantity-input {
+    background-color: var(--bg-dark-blue) !important;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary) !important;
+}
+
+.cart-item-remove:hover {
+    color: var(--error-color);
+    background-color: rgba(239, 68, 68, 0.1);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Botón Pago: Azul Clarito */
+.btn-pagar {
+    background: linear-gradient(45deg, var(--bg-light-blue), #2563eb) !important;
+    color: var(--text-primary) !important;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 2.5rem;
+    font-weight: 600;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.btn-pagar:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    background: linear-gradient(45deg, #2563eb, #1d4ed8);
+}
+
+/* Contenedor para Rastreo: Input Arriba, Botón Debajo y Centrado */
+.rastreo-section {
+    display: flex !important;
+    flex-direction: column !important;  /* Vertical: texto arriba, botón abajo */
+    align-items: center !important;     /* Centra horizontalmente todo */
+    gap: 1rem;                          /* Espacio entre input y botón */
+    margin: 2rem auto !important;       /* Centra el contenedor en la página */
+    max-width: 400px;                   /* Limita ancho para no expandirse */
+    width: 100%;
+}
+
+/* Ajuste al Botón: Block para Centrado y Espacio Debajo del Texto */
+.btn-rastrear {
+    background: linear-gradient(45deg, var(--bg-light-blue), #2563eb) !important;
+    color: var(--text-primary) !important;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1.2rem !important;
+    font-size: 0.9rem !important;
+    font-weight: 600;
+    width: auto !important;             /* Ancho automático */
+    display: block !important;          /* Block para que se centre con margin auto */
+    margin: 0 auto !important;          /* Centra el botón horizontalmente */
+    transition: var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-rastrear:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-hover);
+    background: linear-gradient(45deg, #2563eb, #1d4ed8);
+}
+
+/* Input de Rastreo: Ajustado para el Contenedor (Opcional, si usas .form-control) */
+.rastreo-section .form-control {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: var(--text-primary) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 8px;
+    padding: 0.8rem !important;
+    text-align: center;  /* Texto centrado en input */
+    max-width: 300px;    /* Limita input para consistencia */
+}
+
+/* Título Rastreo: Centrado Horizontal (Reforzado) y Vertical Opcional */
+.titulo-rastreo {
+    text-align: center !important;      /* Centra el TEXTO horizontalmente */
+    font-size: 2.5rem !important;       /* Grande en desktop */
+    font-weight: 700;
+    color: var(--text-primary) !important;  /* Blanco puro */
+    margin: 0 auto 2rem auto !important;  /* Centra el BLOQUE horizontal (auto margins) */
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: fit-content !important;      /* Ancho auto al texto */
+    max-width: 100% !important;
+    white-space: nowrap !important;     /* Una sola línea */
+    overflow: visible !important;
+    hyphens: none !important;
+    display: block !important;          /* Bloque para que auto margins funcionen */
+    padding: 0 1rem;
+}
+
+/* Contenedor Opcional para Centrado Vertical (En Medio de la Página) */
+.titulo-container {
+    display: flex !important;
+    justify-content: center !important;  /* Centra horizontal (refuerzo) */
+    align-items: center !important;      /* Centra VERTICAL en el contenedor */
+    min-height: 20vh !important;         /* Altura mínima para posicionar en medio (ajusta si es full-page) */
+    width: 100%;
+    margin: 2rem 0 !important;           /* Espacio arriba/abajo */
+}
+
+/* Responsive: Mantiene Centrado en Mobile */
+@media (max-width: 768px) {
+    .titulo-rastreo {
+        font-size: 1.5rem !important;
+        white-space: nowrap !important;
+        letter-spacing: 0.5px !important;
+        padding: 0 0.5rem !important;
+        max-width: 90vw !important;
+        margin: 0 auto 1.5rem auto !important;  /* Refuerza centrado en mobile */
+    }
+
+    .titulo-container {
+        min-height: 15vh !important;  /* Menos altura en mobile */
+        align-items: flex-start !important;  /* Arriba en mobile si es muy alto */
+    }
+}
+
+@media (max-width: 480px) {
+    .titulo-rastreo {
+        font-size: 1.3rem !important;
+    }
+}
+
+
+
+/* Responsive: Reduce Tamaño en Mobile para Evitar Breaks (Pero Mantiene Una Línea) */
+@media (max-width: 768px) {
+    .titulo-rastreo {
+        font-size: 1.8rem !important;   /* Más pequeño en mobile para caber */
+        white-space: nowrap !important; /* Mantiene una línea */
+        padding: 0 1rem;                /* Espacio lateral si es necesario */
+    }
+}
+
+
+/* Toast: Oscuro */
+.toast-notification {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-primary) !important;
+    border-left: 5px solid var(--bg-light-blue) !important;
+}
+
+/* Carrito Icon: Azul Badge */
+.cart-icon {
+    color: var(--text-secondary) !important;
+    font-size: 1.5rem;
+    position: relative;
+    text-decoration: none;
+    margin-left: 1rem;
+    transition: var(--transition);
+}
+
+.cart-icon:hover {
+    color: var(--bg-light-blue) !important;
+}
+
+.cart-count {
+    background-color: var(--bg-light-blue) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Hero Carousel: Overlay Muy Oscuro */
+#hero-carousel {
+    height: 100vh;
+}
+
+.carousel-item {
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.carousel-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 14, 26, 0.8) !important;  /* Muy oscuro */
+}
+
+.carousel-caption {
+    bottom: 20%;
+    color: var(--text-primary) !important;
+}
+
+/* Footer: Muy Oscuro */
+footer {
+    background-color: rgba(10, 14, 26, 0.95) !important;
+    color: var(--text-secondary) !important;
+    padding: 2rem;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+}
+
+footer a {
+    color: var(--bg-light-blue) !important;
+}
+
+footer a:hover {
+    color: var(--text-primary) !important;
+}
+
+/* Sobrescribe Verdes/Negros/Claritos Antiguos */
+.bg-primary, .bg-light, .text-success, .btn-success {
+    background-color: var(--bg-dark-blue) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Sobrescribe Verdes/Negros/Claritos Antiguos (Continuación) */
+.btn-success {
+    background: linear-gradient(45deg, var(--bg-light-blue), #2563eb) !important;  /* Azul clarito para botones success */
+    border-color: var(--bg-light-blue) !important;
+    color: var(--text-primary) !important;
+}
+
+.btn-success:hover {
+    background: linear-gradient(45deg, #2563eb, #1d4ed8) !important;  /* Azul más oscuro en hover */
+    box-shadow: var(--shadow-hover) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Responsive: Ajustes para Mobile (Reduce Hover para Touch) */
+@media (max-width: 768px) {
+    .page-content, main, .container {
+        padding: 6rem 1rem 2rem !important;  /* Menos padding en mobile */
+    }
+
+    .auth-box {
+        padding: 2rem 2rem !important;  /* Compacto en mobile */
+        margin: 1rem;
+        max-width: 90% !important;
+    }
+
+    .auth-title {
+        font-size: 2rem !important;  /* Título más pequeño */
+    }
+
+    .auth-input, input[type="text"], input[type="email"], input[type="password"] {
+        padding: 1rem !important;  /* Padding reducido */
+    }
+
+    .auth-button, button[type="submit"] {
+        padding: 0.9rem 2rem !important;  /* Botón compacto */
+    }
+
+    .product-card, .seller-product-card, .card, .btn-custom, .auth-button {
+        margin-bottom: 1rem !important;  /* Espacio extra en mobile */
+    }
+
+    /* Desactiva elevación en hover para mobile (mejor touch) */
+    .product-card:hover, .seller-product-card:hover, .card:hover, 
+    .btn-custom:hover, .auth-button:hover, button[type="submit"]:hover,
+    .cart-item:hover, .nav-link:hover, .btn-pagar:hover, .btn-success:hover {
+        transform: none !important;  /* Sin translateY en mobile */
+        box-shadow: var(--shadow-hover) !important;  /* Mantiene sombra */
+    }
+
+    .navbar {
+        padding: 0.5rem 1rem !important;  /* Navbar más compacto */
+    }
+
+    .cart-container {
+        padding: 1rem !important;
+    }
+
+    .carousel-caption {
+        bottom: 10% !important;  /* Caption ajustado en mobile */
+        font-size: 0.9rem !important;
+    }
+
+    .product-image-container {
+        height: 150px !important;  /* Imágenes más pequeñas */
+    }
+}
+
+/* Fin del CSS - Tema Azul Muy Oscuro Corregido */

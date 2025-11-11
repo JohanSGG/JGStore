@@ -1,23 +1,57 @@
-// jgstore-backend/models/UserModel.js (VERSIÓN CON DEPURACIÓN)
+// models/UserModel.js
 const db = require('../config/db');
+const bcrypt = require('bcryptjs');
 
-class User {
-    static async create(newUser) {
-        console.log("--- EJECUTANDO UserModel.create (VERSIÓN DEFINITIVA) ---");
-        console.log("Datos recibidos para crear en la base de datos:", newUser);
+// Función para buscar usuario por email (usada en login)
+const findByEmail = async (email, dbPool) => {
+    try {
+        const [rows] = await dbPool.execute(
+            'SELECT id, nombre, apellido, email, password, role, storeName FROM users WHERE email = ?',
+            [email]
+        );
+        console.log('User  Model.findByEmail ejecutado con pool compartido:', { email });
+        return rows[0] || null;
+    } catch (error) {
+        console.error('Error en UserModel.findByEmail:', error.message);
+        throw error;
+    }
+};
 
-        const { nombre, apellido, email, password, role, storeName } = newUser;
-        const sql = 'INSERT INTO users (nombre, apellido, email, password, role, storeName) VALUES (?, ?, ?, ?, ?, ?)';
-        const [result] = await db.execute(sql, [nombre, apellido, email, password, role, storeName]);
+// Nueva: Buscar por ID (para authMiddleware.protect)
+const findById = async (userId, dbPool) => {
+    try {
+        const [rows] = await dbPool.execute(
+            'SELECT id, nombre, apellido, email, role, storeName FROM users WHERE id = ?',
+            [userId]
+        );
+        return rows[0] || null;
+    } catch (error) {
+        console.error('Error en UserModel.findById:', error.message);
+        throw error;
+    }
+};
+
+// Función para crear usuario (usada en register)
+const createUser  = async (userData, dbPool) => {
+    try {
+        const { nombre, apellido, email, hashedPassword, role, storeName } = userData;
         
-        return { id: result.insertId, ...newUser };
+        const [result] = await dbPool.execute(
+            'INSERT INTO users (nombre, apellido, email, password, role, storeName) VALUES (?, ?, ?, ?, ?, ?)',
+            [nombre, apellido || '', email, hashedPassword, role || 'cliente', storeName || null]
+        );
+        
+        const newUser Id = result.insertId;
+        console.log('User  Model.createUser  exitoso:', { newUser Id, email });
+        
+        return await findByEmail(email, dbPool);
+    } catch (error) {
+        console.error('Error en UserModel.createUser :', error.message);
+        if (error.code === 'ER_DUP_ENTRY') {
+            throw new Error('Email ya registrado');
+        }
+        throw error;
     }
+};
 
-    static async findByEmail(email) {
-        const sql = 'SELECT * FROM users WHERE email = ?';
-        const [rows] = await db.execute(sql, [email]);
-        return rows[0];
-    }
-}
-
-module.exports = User;
+module.exports = { findByEmail, createUser , findById };
