@@ -54,7 +54,7 @@ async function initDbPool() {
     }
 }
 
-// Middleware (limpio, sin duplicados) – Tu código + req.db agregado
+// Middleware
 app.use(cors({ 
     origin: ['http://localhost:3000', 'http://127.0.0.1:5500'],  // Permite ambos origins comunes
     credentials: true,
@@ -79,7 +79,7 @@ app.use(session({
     }
 }));
 
-// Middleware para JWT (setea req.user para auth en controllers) – Tu código intacto
+// Middleware para JWT (setea req.user para auth en controllers)
 app.use((req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (token) {
