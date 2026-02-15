@@ -106,7 +106,7 @@ exports.procesarPago = [requireLogin, async (req, res) => {
 
         // Generar PDF – Path ajustado: controllers/ -> jgstore-backend/ -> root JGStore/facturas
         const numero_factura = `FAC-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${order_id}`;
-        const facturasDir = path.join(__dirname, '../../facturas');  // Ajustado (ver nota abajo)
+        const facturasDir = path.join(__dirname, '../../facturas');  
         if (!fs.existsSync(facturasDir)) {
             fs.mkdirSync(facturasDir, { recursive: true });
         }
@@ -149,7 +149,7 @@ exports.procesarPago = [requireLogin, async (req, res) => {
     }
 }];
 
-// POST /createOrder (Bonus: Si lo usas; convertido a raw SQL)
+// POST /createOrder (Solo creación de orden sin pago, para testing o flujo separado)
 exports.createOrder = [requireLogin, async (req, res) => {
     try {
         const user_id = req.session.user_id;  // Session
@@ -199,7 +199,7 @@ exports.createOrder = [requireLogin, async (req, res) => {
     }
 }];
 
-// GET /rastreo (Bonus: Detalles por código)
+// GET /rastreo (Bonus: Rastreo por código, con seguridad de usuario)
 exports.getRastreo = [requireLogin, async (req, res) => {
     const { codigo } = req.query;
     const user_id = req.session.user_id;  // Session

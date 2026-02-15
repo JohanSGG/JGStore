@@ -31,7 +31,7 @@
       }
   }, {
       tableName: 'transactions',
-      timestamps: false  // Si no usas created_at/updated_at
+      timestamps: false 
   });
 
   Transaction.belongsTo(OrderModel, { foreignKey: 'order_id' });

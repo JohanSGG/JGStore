@@ -1,4 +1,4 @@
-// jgstore-backend/server.js (Tu Código + req.db Middleware + Logs Detallados – Funcionalidades Intactas)
+// jgstore-backend/server.js 
 require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
@@ -94,8 +94,7 @@ app.use((req, res, next) => {
 });
 
 // Servir archivos estáticos desde ROOT JGStore/ (sube un nivel desde jgstore-backend/) – Tu código intacto
-app.use(express.static(path.join(__dirname, '../')));  // '../' para root (index.html, css/, js/)
-
+app.use(express.static(path.join(__dirname, '../')));
 // Servir PDFs generados desde /facturas (crea dir en root si no existe) – Tu código intacto
 const facturasDir = path.join(__dirname, '../', 'facturas');  // En root JGStore/
 if (!fs.existsSync(facturasDir)) {
@@ -124,7 +123,7 @@ try {
     app.use('/api/auth', authRoutes);
 }
 
-// Ruta de prueba DB (usa pool importado) – Tu código intacto
+// Ruta de prueba DB (usa pool importado) 
 app.get('/api/test-db', async (req, res) => {
     try {
         const [rows] = await pool.execute('SELECT 1 as test');  // Usa pool importado
@@ -135,7 +134,7 @@ app.get('/api/test-db', async (req, res) => {
     }
 });
 
-// Rutas nuevas/integradas para carrito, pago y rastreo – AJUSTADAS A TUS NOMBRES + logs detallados
+// Rutas nuevas/integradas para carrito, pago y rastreo 
 try {
     const cartRoutes = require('./routes/cartRoutes');  // Tu nombre: cartRoutes.js
     app.use('/api/cart', cartRoutes);
@@ -170,7 +169,7 @@ try {
 }
 
 
-// Rutas específicas para páginas HTML (fallback; paths a root JGStore/) – Tu código intacto
+// Rutas específicas para páginas HTML (fallback; paths a root JGStore/) – 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../', 'index.html'));  // '../'
 });
@@ -192,18 +191,18 @@ app.get('/pago_exito.html', (req, res) => {
     }
 });
 
-// Error handler global (al final, para capturar errores en rutas) – Tu código intacto
+// Error handler global (al final, para capturar errores en rutas) 
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Error interno del servidor' });
 });
 
-// Manejo de rutas no encontradas (404) – Tu código intacto
+// Manejo de rutas no encontradas (404) 
 app.use((req, res) => {
     res.status(404).json({ error: 'Ruta no encontrada' });
 });
 
-// Inicializa pool y empieza server – Tu código intacto
+// Inicializa pool y empieza server 
 async function startServer() {
     await initDbPool();
     app.listen(PORT, () => {

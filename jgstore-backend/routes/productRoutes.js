@@ -7,7 +7,7 @@ const requireAuth = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Token requerido' });
     try {
-        // Decodifica JWT (usa tu función de authRoutes, e.g., jwt.verify(token, secret))
+        // Decodifica JWT (usa función de authRoutes, e.g., jwt.verify(token, secret))
         // req.user = decoded;  // Asume que decoded tiene { id, role }
         req.user = { id: 1, role: 'vendedor' };  // Placeholder; reemplaza con real JWT
         if (req.user.role !== 'vendedor') return res.status(403).json({ message: 'Solo vendedores pueden agregar productos' });

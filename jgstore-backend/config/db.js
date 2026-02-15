@@ -1,4 +1,4 @@
- // jgstore-backend/config/db.js (Versión mejorada; reemplaza tu actual)
+ // jgstore-backend/config/db.js 
    const mysql = require('mysql2/promise');
    require('dotenv').config();
    const pool = mysql.createPool({
@@ -9,9 +9,9 @@
        waitForConnections: true,
        connectionLimit: 10,
        queueLimit: 0,
-       charset: 'utf8mb4'  // Para emojis/accentos si needed
+       charset: 'utf8mb4'  // Para emojis/accentos
    });
-   // Test conexión al importar (opcional, quita en prod)
+   // Test conexión al importar 
    pool.getConnection().then(conn => {
        console.log('Conexión MySQL desde config/db.js: OK');
        conn.release();

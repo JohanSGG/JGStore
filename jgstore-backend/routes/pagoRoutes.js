@@ -1,4 +1,4 @@
-// jgstore-backend/routes/pagoRoutes.js (Completo: JWT + Roles, Tu Lógica Inline Adaptada)
+// jgstore-backend/routes/pagoRoutes.js
 const express = require('express');
 const pool = require('../config/db');  // Directo (opcional; usamos req.db principalmente)
 const PDFDocument = require('pdfkit');

@@ -1,4 +1,4 @@
-// jgstore-backend/routes/orderRoutes.js (Completo Final: Inline JWT + req.db, Sin Duplicados)
+// jgstore-backend/routes/orderRoutes.js 
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
@@ -8,7 +8,7 @@ const pool = require('../config/db');  // Fallback si req.db no disponible
 // Protege todas las rutas con JWT (general, no role-specific para orders)
 router.use(protect);
 
-// GET /api/order/rastreo?codigo=TRK-... (tu lógica inline, con req.db y req.user.id)
+// GET /api/order/rastreo?codigo=TRK-... 
 router.get('/rastreo', async (req, res) => {
     const { codigo } = req.query;
     const user_id = req.user.id;  // De JWT
@@ -32,7 +32,7 @@ router.get('/rastreo', async (req, res) => {
     }
 });
 
-// POST /api/order/create (tu ruta, inline ejemplo – ajusta si usas controller)
+// POST /api/order/create
 router.post('/create', async (req, res) => {
     const user_id = req.user.id;
     const { items, shipping_address, total } = req.body;  // De frontend sync

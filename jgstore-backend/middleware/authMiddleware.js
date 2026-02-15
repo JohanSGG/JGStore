@@ -41,7 +41,7 @@ module.exports.protect = async (req, res, next) => {  // Cambiado a module.expor
 };
 
 // Middleware para admin
-module.exports.isAdmin = (req, res, next) => {  // Cambiado
+module.exports.isAdmin = (req, res, next) => {  
     if (req.user && req.user.role === 'admin') {
         next();
     } else {
@@ -50,7 +50,7 @@ module.exports.isAdmin = (req, res, next) => {  // Cambiado
 };
 
 // Middleware para vendedor
-module.exports.isSeller = (req, res, next) => {  // Cambiado
+module.exports.isSeller = (req, res, next) => { 
     if (req.user && (req.user.role === 'vendedor' || req.user.role === 'admin')) {
         next();
     } else {
@@ -59,7 +59,7 @@ module.exports.isSeller = (req, res, next) => {  // Cambiado
 };
 
 // Middleware para cliente
-module.exports.isClient = (req, res, next) => {  // Cambiado
+module.exports.isClient = (req, res, next) => {  
     if (req.user && req.user.role === 'cliente') {
         next();
     } else {

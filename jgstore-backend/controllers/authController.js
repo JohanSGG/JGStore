@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('ERROR DETALLADO EN EL LOGIN:', error);  // Tu stack trace
+        console.error('ERROR DETALLADO EN EL LOGIN:', error);  //stack trace
         res.status(500).json({ message: 'Error en servidor: ' + error.message });
     }
 };

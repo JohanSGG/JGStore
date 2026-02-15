@@ -41,8 +41,8 @@ const createUser  = async (userData, dbPool) => {
             [nombre, apellido || '', email, hashedPassword, role || 'cliente', storeName || null]
         );
         
-        const newUser Id = result.insertId;
-        console.log('User  Model.createUser  exitoso:', { newUser Id, email });
+        const newUserId = result.insertId;
+        console.log('User  Model.createUser  exitoso:', { newUserId, email });
         
         return await findByEmail(email, dbPool);
     } catch (error) {

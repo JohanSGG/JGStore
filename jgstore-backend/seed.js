@@ -8,7 +8,7 @@ const dbConfig = {
     database: process.env.DB_NAME || 'jgstore_db'
 };
 
-// Datos hardcodeados de products.js (copia de tu array)
+// Datos hardcodeados de products.js 
 const productsData = [
     { id: 'p1', name: 'Laptop Pro X15', price: 4500000, img: 'images/laptop.png', description: 'Potente laptop con procesador de última generación, 16GB de RAM y 1TB SSD. Ideal para diseño y programación.' },
     { id: 'p2', name: 'Teclado Mecánico K-800', price: 380000, img: 'images/keyboard.png', description: 'Experimenta una respuesta táctil superior con switches Cherry MX y retroiluminación RGB personalizable.' },
@@ -20,7 +20,7 @@ const productsData = [
     { id: 'p8', name: 'Cargador GaN 120W', price: 150000, img: 'images/charger.png', description: 'Carga tu laptop, tablet y smartphone simultáneamente con este cargador compacto de nitruro de galio.' },
     { id: 'p9', name: 'Mouse Ergonómico MX', price: 280000, img: 'images/mouse.png', description: 'Diseño ergonómico para máxima comodidad durante horas de trabajo. Conectividad dual y scroll electromagnético.' },
     { id: 'p10', name: 'Monitor UltraWide 34"', price: 2800000, img: 'images/monitor.png', description: 'Maximiza tu productividad con este monitor curvo UltraWide QHD de 34 pulgadas. Ideal para multitarea.' }
-    // Agrega más aquí si tienes hasta 50
+    
 ];
 
 async function seedProducts() {

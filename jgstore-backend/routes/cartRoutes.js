@@ -1,4 +1,4 @@
-// jgstore-backend/routes/cartRoutes.js (Completo: JWT + Roles, Inline Lógica)
+// jgstore-backend/routes/cartRoutes.js 
 const express = require('express');
 const pool = require('../config/db');  // Directo para queries
 const router = express.Router();
