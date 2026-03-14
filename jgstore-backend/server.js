@@ -225,4 +225,24 @@ async function startServer() {
 startServer().catch(error => {
     console.error('Error iniciando server:', error);
     process.exit(1);
+
+
+console.log('🔍 Variables de entorno:');
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('DB_USER:', process.env.DB_USER ? 'OK' : 'FALTA');
+console.log('DB_NAME:', process.env.DB_NAME);
+
+// Test conexión inmediata
+const testConnection = async () => {
+    try {
+        const connection = await pool.getConnection();
+        console.log('✅ Conexión MySQL EXITOSA');
+        connection.release();
+    } catch (error) {
+        console.error('❌ Error MySQL:', error.message);
+    }
+};
+testConnection();
+
+
 });
