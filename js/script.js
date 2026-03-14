@@ -1,6 +1,6 @@
 // js/script.js (Completo: Backend Sync para Carrito + Pago, JWT Headers, Limpio)
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = 'http://localhost:3000/api';
+    const API_URL = 'https://jgstore-production.up.railway.app/api';
     
     // Helpers localStorage (fallback para no-logueados)
     const getStorage = (key) => {
