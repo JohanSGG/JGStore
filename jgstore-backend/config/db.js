@@ -10,6 +10,7 @@
        connectionLimit: 10,
        queueLimit: 0,
        charset: 'utf8mb4'  // Para emojis/accentos
+       uri: process.env.DATABASE_URL, // ¡Automatioco! 
    });
    // Test conexión al importar 
    pool.getConnection().then(conn => {

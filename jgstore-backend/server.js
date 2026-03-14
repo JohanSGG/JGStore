@@ -104,10 +104,10 @@ if (!fs.existsSync(facturasDir)) {
 app.use('/facturas', express.static(facturasDir));
 
 
-const productRoutes = require('./routes/productRoutes');  // Asumido que existe
+const productRoutes = require('./routes/productRoutes');  
 app.use('/api/products', productRoutes);
 
-// Auth routes (con try-catch para manejar si no existe)
+// Auth routes 
 let authRoutes;
 try {
     authRoutes = require('./routes/authRoutes');
