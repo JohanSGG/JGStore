@@ -199,6 +199,16 @@ async function startServer() {
     }
 }
 
-startServer().catch(error => {
-    console.error('Error iniciando server:', error);
-});
+async function startServer() {
+    // Escuchar en el puerto dinámico de Railway usando '0.0.0.0'
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Servidor Express corriendo en el puerto ${PORT}`);
+        console.log('Paths ajustados: Frontend servido desde root JGStore/.');
+    });
+
+    try {
+        await initDbPool();
+    } catch (e) {
+        console.error("Fallo al inicializar la BD después del arranque:", e);
+    }
+}
