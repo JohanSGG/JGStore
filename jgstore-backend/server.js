@@ -20,6 +20,7 @@ const dbConfig = {
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',  // DB_PASSWORD para coincidir con config/db.js
     database: process.env.DB_NAME || 'jgstore_db',
+    port: process.env.DB_PORT || 3306,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
