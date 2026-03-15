@@ -182,6 +182,22 @@ async function startServer() {
     });
 }
 
+async function startServer() {
+    // 1. ¡CAMBIO CLAVE! Encendemos Express ANTES de la base de datos.
+    // Así Railway detecta que la app está viva instantáneamente y no la mata (adiós 502).
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Servidor Express corriendo en el puerto ${PORT}`);
+        console.log('Paths ajustados: Frontend servido desde root JGStore/.');
+    });
+
+    // 2. Intentamos conectar la BD de forma asíncrona sin bloquear el arranque del servidor web
+    try {
+        await initDbPool();
+    } catch (e) {
+        console.error("Fallo al inicializar la BD después del arranque:", e);
+    }
+}
+
 startServer().catch(error => {
     console.error('Error iniciando server:', error);
 });
