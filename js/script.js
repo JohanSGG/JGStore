@@ -1,6 +1,8 @@
-// js/script.js (Completo: Backend Sync para Carrito + Pago, JWT Headers, Limpio)
+// js/script.js
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = 'https://jgstore-production.up.railway.app/api';
+    // Detecta automáticamente si está en (localhost/127.0.0.1) o en Railway
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = isLocal ? 'http://localhost:3000/api' : 'https://jgstore-production.up.railway.app/api';
     
     // Helpers localStorage (fallback para no-logueados)
     const getStorage = (key) => {
@@ -137,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return success ? getStorage('cart') : [];  // Backend sync actualiza local
     };
 
-    // Handle auth success (tu código)
+    // Handle auth success 
     const handleAuthSuccess = (result, message) => {
         setCurrentUser (result.user);
         localStorage.setItem('authToken', result.token);
@@ -154,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const bodyId = document.body.id;
 
-    // Lógica REGISTRO USUARIO (tu código intacto, con fetch auth)
+    // Lógica REGISTRO USUARIO 
     if (bodyId === 'page-crear-cuenta') {
         const form = document.getElementById('user-registration-form');
         if (form) {
@@ -206,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Lógica REGISTRO VENDEDOR (tu código intacto, similar)
+    // Lógica REGISTRO VENDEDOR 
     if (bodyId === 'page-registro-vendedor') {
         const form = document.getElementById('seller-registration-form');
         if (form) {
@@ -259,12 +261,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Lógica LOGIN 
     if (bodyId === 'page-login') {
         const form = document.getElementById('login-form');
         if (form) {
             form.addEventListener('submit', async (e) => {
-                
                 e.preventDefault();
                 const submitBtn = form.querySelector('button[type="submit"]');
                 if (submitBtn) {
@@ -286,20 +286,36 @@ document.addEventListener('DOMContentLoaded', () => {
                         method: 'POST',
                         body: JSON.stringify({ email, password })
                     });
+                    
+                    // VALIDACIÓN NUEVA PARA EVITAR EL ERROR DE JSON
                     if (!response.ok) {
-                        const errorData = await response.json();
-                        alert(`Error: ${errorData.message || 'Credenciales inválidas.'}`);
+                        const contentType = response.headers.get("content-type");
+                        let errorMessage = 'Credenciales inválidas o error en el servidor.';
+                        
+                        // Si la respuesta es JSON, la leemos normal
+                        if (contentType && contentType.includes("application/json")) {
+                            const errorData = await response.json();
+                            errorMessage = errorData.message || errorMessage;
+                        } else {
+                            // Si la respuesta es un error 404/405 en HTML de Railway, leemos como texto para no crashear
+                            const errorText = await response.text();
+                            console.error('El servidor no devolvió JSON. Respuesta:', errorText);
+                            errorMessage = `Error del servidor (${response.status}). Revisa la consola.`;
+                        }
+                        
+                        alert(errorMessage);
                         if (submitBtn) {
                             submitBtn.disabled = false;
                             submitBtn.textContent = 'Iniciar Sesión';
                         }
                         return;
                     }
+                    
                     const result = await response.json();
                     handleAuthSuccess(result, '¡Login exitoso!');
                 } catch (error) {
                     console.error('Error login:', error);
-                    alert('Error de conexión.');
+                    alert('Error de conexión con el servidor.');
                     if (submitBtn) {
                         submitBtn.disabled = false;
                         submitBtn.textContent = 'Iniciar Sesión';
@@ -309,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Lógica MI CUENTA (tu código intacto)
+    // Lógica MI CUENTA 
     if (bodyId === 'page-mi-cuenta') {
         const currentUser  = getCurrentUser ();
         const detailsContainer = document.getElementById('account-details');
@@ -333,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Lógica para RASTREO (adaptada: usa sendWithAuth para token)
+    // Lógica para RASTREO
     if (bodyId === 'page-rastreo') {
         const rastreoForm = document.getElementById('rastreo-form');
         const resultsContainer = document.getElementById('rastreo-results');
@@ -395,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Lógica para PRODUCTOS (usa addToCart con backend sync)
+    // Lógica para PRODUCTOS 
     if (bodyId === 'page-productos') {
         const container = document.getElementById('products-container');
         if (container) {
@@ -444,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `).join('');
 
-                // Event listener para añadir rápido (usa addToCart backend)
+                // Event listener para añadir rápido 
                 container.addEventListener('click', e => {
                     if (e.target.matches('.add-to-cart-quick')) {
                         e.preventDefault();
@@ -465,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Lógica para DETALLE DE PRODUCTO (usa addToCart backend)
+    // Lógica para DETALLE DE PRODUCTO 
     if (bodyId === 'page-producto-detalle') {
         const container = document.getElementById('product-detail-container');
         const params = new URLSearchParams(window.location.search);
@@ -577,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadProductDetail();
     }
 
-    // Lógica para CARRITO (backend: usa getCart async, sync remove/add)
+    // Lógica para CARRITO 
     if (bodyId === 'page-carrito') {
         const itemsContainer = document.getElementById('cart-items-container');
         const summaryContainer = document.getElementById('cart-summary');
@@ -587,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (summaryContainer) summaryContainer.style.display = 'none';
         
         const renderCart = async () => {
-            const cart = await getCart();  // Backend si logueado, local fallback
+            const cart = await getCart();  
             console.log('Render carrito:', cart.length, 'items');
             
             if (cart.length === 0) {
@@ -653,7 +669,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Event listeners para carrito (sync backend)
         if (itemsContainer) {
             itemsContainer.addEventListener('click', async e => {
                 if (e.target.matches('.cart-item-remove')) {
@@ -671,7 +686,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const itemId = e.target.dataset.id;
                     const newQuantity = parseInt(e.target.value) || 1;
                     if (newQuantity > 0) {
-                        // Actualiza backend (usa agregar para update quantity)
                         await syncCartAction('agregar', { id: itemId, quantity: newQuantity - (await getCart()).find(item => item.id === itemId)?.quantity || 0 });
                     } else {
                         await removeFromCart(itemId);
@@ -681,15 +695,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Render inicial
         renderCart();
     }
 
-    // NUEVA LÓGICA PARA PAGO (backend: load cart de BD, procesar via API)
+    // NUEVA LÓGICA PARA PAGO 
     if (bodyId === 'page-pago') {
-        const itemsContainer = document.getElementById('payment-items-container') || document.getElementById('cart-items-container');  // Asume ID en HTML
+        const itemsContainer = document.getElementById('payment-items-container') || document.getElementById('cart-items-container');  
         const summaryContainer = document.getElementById('payment-summary') || document.getElementById('cart-summary');
-        const shippingForm = document.getElementById('shipping-form');  // Form para dirección
+        const shippingForm = document.getElementById('shipping-form');  
         const processBtn = document.getElementById('process-payment-btn');
         
         if (!requireLogin('login.html', 'Debes iniciar sesión para pagar.')) return;
@@ -717,7 +730,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                // Render items (similar a carrito)
                 if (itemsContainer) {
                     itemsContainer.innerHTML = cart.map(item => `
                         <div class="row mb-3">
@@ -736,7 +748,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     `).join('');
                 }
                 
-                // Calcula totales
                 const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
                 const shipping = subtotal > 0 ? 15000 : 0;
                 const total = subtotal + shipping;
@@ -749,7 +760,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (totalEl) totalEl.textContent = `$ ${total.toLocaleString('es-CO')}`;
                 if (summaryContainer) summaryContainer.style.display = 'block';
                 
-                // Maneja form de envío y procesar pago
                 if (shippingForm && processBtn) {
                     shippingForm.addEventListener('submit', async (e) => {
                         e.preventDefault();
@@ -765,7 +775,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         try {
                             const response = await sendWithAuth(`${API_URL}/pago/procesar`, {
                                 method: 'POST',
-                                body: JSON.stringify({ shipping_address, billing_address: shipping_address })  // Asume billing = shipping
+                                body: JSON.stringify({ shipping_address, billing_address: shipping_address })  
                             });
                             if (!response.ok) {
                                 const error = await response.json();
@@ -777,9 +787,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const result = await response.json();
                             if (result.success) {
                                 alert('¡Pago procesado exitosamente!');
-                                // Limpia carrito local
                                 saveStorage('cart', []);
-                                // Redirige a éxito con params
                                 const redirectUrl = `/pago_exito.html?order_id=${result.order_id}&tracking=${result.tracking_number}&factura=${result.factura_numero}&total=${total}`;
                                 window.location.href = redirectUrl;
                             }
@@ -801,7 +809,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPaymentCart();
     }
 
-    // Lógica para PAGO ÉXITO (opcional: muestra params de URL)
+    // Lógica para PAGO ÉXITO 
     if (bodyId === 'page-pago-exito') {
         const params = new URLSearchParams(window.location.search);
         const orderId = params.get('order_id');
@@ -823,8 +831,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
     }
 
-    // Update navbar (tu código limpio)
-        const updateNavbar = () => {
+    // Update navbar 
+    const updateNavbar = () => {
         const authSection = document.getElementById('auth-section');
         const currentUser   = getCurrentUser  ();
         const venderLink = document.getElementById('vender-link');
@@ -842,37 +850,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const logoutBtn = document.getElementById('logout-btn');
                 if (logoutBtn) {
-                    logoutBtn.addEventListener('click', () => {
-                        sessionStorage.removeItem('currentUser  ');
+                    logoutBtn.addEventListener('click', async () => {
+                        try {
+                            const response = await sendWithAuth(`${API_URL}/auth/logout`, {
+                                method: 'POST'
+                            });
+                            if (response.ok) {
+                                console.log('DEBUG: Logout backend exitoso');
+                            }
+                        } catch (error) {
+                            console.warn('DEBUG: Error en fetch logout:', error);
+                        }
+                        sessionStorage.removeItem('currentUser ');
                         localStorage.removeItem('authToken');
                         alert('Has cerrado sesión.');
-                        updateNavbar();
-                        
-
-                const logoutBtn = document.getElementById('logout-btn');
-                if (logoutBtn) {
-                logoutBtn.addEventListener('click', async () => {
-                try {
-                // Primero, fetch al backend para invalidar sesión
-                const response = await sendWithAuth(`${API_URL}/auth/logout`, {
-                method: 'POST'
-            });
-            if (response.ok) {
-                console.log('DEBUG: Logout backend exitoso');
-            } else {
-                console.warn('DEBUG: Logout backend falló, pero procediendo');
-            }
-        } catch (error) {
-            console.warn('DEBUG: Error en fetch logout:', error);
-        }
-        // Luego, borra storage del frontend
-        sessionStorage.removeItem('currentUser ');
-        localStorage.removeItem('authToken');
-        alert('Has cerrado sesión.');
-        updateNavbar();  // Actualiza navbar (usuario ya no logueado)
-        window.location.href = 'index.html';  // Redirige
-    });
-}
+                        updateNavbar();  
+                        window.location.href = 'index.html';  
                     });
                 }
             } else {
@@ -887,6 +880,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Llamada final: Actualiza navbar en todas las páginas
     updateNavbar();
 });
