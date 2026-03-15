@@ -212,3 +212,6 @@ async function startServer() {
         console.error("Fallo al inicializar la BD después del arranque:", e);
     }
 }
+startServer().catch(error => {
+    console.error('Error iniciando server:', error);
+});
