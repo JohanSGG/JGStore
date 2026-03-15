@@ -4,72 +4,71 @@ const express = require('express');
 const mysql = require('mysql2/promise');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');  // Para auth
-const bcrypt = require('bcryptjs');   // Para hash passwords
-const session = require('express-session');  // Mantenido (opcional con JWT)
-const fs = require('fs');  // Para facturas dir
+const jwt = require('jsonwebtoken');  
+const bcrypt = require('bcryptjs');   
+const session = require('express-session');  
+const fs = require('fs');  
 const path = require('path');
-const pool = require('./config/db');  // Directo a config/ (ya OK)
+const pool = require('./config/db');  
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuración de BD desde .env (para initDbPool si needed) – Unificado a DB_PASSWORD
-// Configuración de BD desde .env o Railway Automático
+// Configuración de BD unificada
 const dbConfig = {
     host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
     user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
-    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '',
+    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '', 
     database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'jgstore_db',
-    port: parseInt(process.env.DB_PORT || process.env.MYSQLPORT || 3306),
+    port: parseInt(process.env.DB_PORT || process.env.MYSQLPORT || 30739), // Forzamos el puerto de Railway
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 };
 
-console.log(`[server.js] Configuración DB -> Host: ${dbConfig.host} | Puerto: ${dbConfig.port}`);
-
-// Inicializa pool de conexiones MySQL (si no usas el importado de config/db) – Tu código intacto
+// Inicializa pool de conexiones MySQL a prueba de fallos
 let dbPool;
 async function initDbPool() {
     try {
-        // Si pool de config/db no está listo, crea uno local
         if (!pool || typeof pool.execute !== 'function') {
             dbPool = await mysql.createPool(dbConfig);
-            global.dbPool = dbPool;  // Hazlo global para controllers si needed
+            global.dbPool = dbPool;  
         } else {
-            dbPool = pool;  // Usa el importado
+            dbPool = pool;  
         }
         console.log('Pool MySQL creado/inicializado exitosamente.');
 
-        // Prueba conexión robusta
         const connection = await dbPool.getConnection();
         const [dbRows] = await connection.execute('SELECT DATABASE() as db_name');
-        const [userRows] = await connection.execute('SELECT COUNT(*) as user_count FROM users');
         console.log('Conexión a MySQL probada: OK');
         console.log('BD actual:', dbRows[0].db_name);
-        console.log('Usuarios en BD:', userRows[0].user_count);
+        
+        // Blindamos esta consulta para que NO mate el servidor si la tabla no existe
+        try {
+            const [userRows] = await connection.execute('SELECT COUNT(*) as user_count FROM users');
+            console.log('Usuarios en BD:', userRows[0].user_count);
+        } catch (tableError) {
+            console.warn('⚠️ Advertencia: La tabla "users" no existe aún en la base de datos.');
+        }
+
         connection.release();
     } catch (error) {
-        console.error('Error creando pool MySQL:', error.message);
-        console.error('Stack trace:', error.stack);
-        console.error('Verifica .env (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME), que MySQL esté corriendo, y que la BD "jgstore_db" exista.');
-        process.exit(1);  // Sale si falla conexión
+        console.error('❌ Error creando pool MySQL:', error.message);
+        // ELIMINADO process.exit(1) para evitar el 502 Bad Gateway
     }
 }
 
 // Middleware
 app.use(cors({ 
-    origin: ['http://localhost:3000', 'http://127.0.0.1:5500'],  // Permite ambos origins comunes
+    origin: ['http://localhost:3000', 'http://127.0.0.1:5500', 'https://jgstore-production.up.railway.app'], 
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// NUEVO: Middleware para setear req.db = pool (para authRoutes y routes – resuelve req.db)
 app.use((req, res, next) => {
-    req.db = dbPool || pool;  // Usa pool global/importado
+    req.db = dbPool || pool;  
     next();
 });
 
@@ -78,18 +77,17 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: { 
-        secure: false,  // true en producción con HTTPS
-        maxAge: 1000 * 60 * 60 * 24  // 1 día
+        secure: false,  
+        maxAge: 1000 * 60 * 60 * 24  
     }
 }));
 
-// Middleware para JWT (setea req.user para auth en controllers)
 app.use((req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mi_clave_secreta_para_jwt_1234567890');
-            req.user = decoded;  // { id, role } para auth (usa req.user.id en controllers)
+            req.user = decoded;  
         } catch (error) {
             console.warn('Token inválido:', error.message);
         }
@@ -97,156 +95,93 @@ app.use((req, res, next) => {
     next();
 });
 
-// Servir archivos estáticos desde ROOT JGStore/ (sube un nivel desde jgstore-backend/) – Tu código intacto
+// Servir archivos estáticos 
 app.use(express.static(path.join(__dirname, '../')));
-// Servir PDFs generados desde /facturas (crea dir en root si no existe) – Tu código intacto
-const facturasDir = path.join(__dirname, '../', 'facturas');  // En root JGStore/
+
+const facturasDir = path.join(__dirname, '../', 'facturas');  
 if (!fs.existsSync(facturasDir)) {
     fs.mkdirSync(facturasDir, { recursive: true });
     console.log('Carpeta /facturas creada en root.');
 }
 app.use('/facturas', express.static(facturasDir));
 
-
-const productRoutes = require('./routes/productRoutes');  
-app.use('/api/products', productRoutes);
-
-// Auth routes 
-let authRoutes;
+// Rutas
 try {
-    authRoutes = require('./routes/authRoutes');
+    const productRoutes = require('./routes/productRoutes');  
+    app.use('/api/products', productRoutes);
+} catch (e) { console.warn('Ruta de productos falló al cargar.'); }
+
+try {
+    const authRoutes = require('./routes/authRoutes');
     app.use('/api/auth', authRoutes);
     console.log('✅ Auth routes cargadas exitosamente.');
 } catch (error) {
-    console.error('❌ ERROR REAL en ./routes/authRoutes.js:');
-    console.error('Mensaje:', error.message);
-    console.error('Stack completo:', error.stack);
-    authRoutes = express.Router();
-    authRoutes.post('/login', (req, res) => res.status(501).json({ message: 'Auth no implementado. Crea authRoutes.js' }));
-    authRoutes.post('/register', (req, res) => res.status(501).json({ message: 'Auth no implementado. Crea authRoutes.js' }));
-    app.use('/api/auth', authRoutes);
+    console.error('❌ Error en authRoutes.js');
 }
 
-// Ruta de prueba DB (usa pool importado) 
 app.get('/api/test-db', async (req, res) => {
     try {
-        const [rows] = await pool.execute('SELECT 1 as test');  // Usa pool importado
+        const [rows] = await pool.execute('SELECT 1 as test');  
         res.json({ message: 'DB conexión OK', test: rows[0].test });
     } catch (error) {
-        console.error('Error en /api/test-db:', error.message);
         res.status(500).json({ error: 'DB error: ' + error.message });
     }
 });
 
-// Rutas nuevas/integradas para carrito, pago y rastreo 
 try {
-    const cartRoutes = require('./routes/cartRoutes');  // Tu nombre: cartRoutes.js
+    const cartRoutes = require('./routes/cartRoutes');  
     app.use('/api/cart', cartRoutes);
-    console.log('✅ Cart routes cargadas con nombre cartRoutes.js');
-} catch (error) {
-    console.error('❌ ERROR REAL en ./routes/cartRoutes.js:');
-    console.error('Mensaje:', error.message);
-    console.error('Stack completo:', error.stack);
-    console.error('Crea el archivo con CartController o verifica middleware/authMiddleware.');
-}
+    console.log('✅ Cart routes cargadas');
+} catch (error) { console.error('❌ Error en cartRoutes'); }
 
 try {
-    const pagoRoutes = require('./routes/pagoRoutes');  // Tu nombre: pagoRoutes.js
+    const pagoRoutes = require('./routes/pagoRoutes');  
     app.use('/api/pago', pagoRoutes);
-    console.log('✅ Pago routes cargadas con nombre pagoRoutes.js');
-} catch (error) {
-    console.error('❌ ERROR REAL en ./routes/pagoRoutes.js:');
-    console.error('Mensaje:', error.message);
-    console.error('Stack completo:', error.stack);
-    console.error('Crea el archivo con orderController o verifica middleware/authMiddleware.');
-}
+    console.log('✅ Pago routes cargadas');
+} catch (error) { console.error('❌ Error en pagoRoutes'); }
 
 try {
-    const orderRoutes = require('./routes/orderRoutes');  // Asumido; para rastreo
+    const orderRoutes = require('./routes/orderRoutes');  
     app.use('/api/order', orderRoutes);
-    console.log('✅ Order routes cargadas (incluyendo rastreo).');
-} catch (error) {
-    console.error('❌ ERROR REAL en ./routes/orderRoutes.js:');
-    console.error('Mensaje:', error.message);
-    console.error('Stack completo:', error.stack);
-    console.log('Crea orderRoutes.js para /api/order/rastreo o usa try-catch en controllers.');
-}
+    console.log('✅ Order routes cargadas');
+} catch (error) { console.error('❌ Error en orderRoutes'); }
 
-
-// Rutas específicas para páginas HTML (fallback; paths a root JGStore/) – 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../', 'index.html'));  // '../'
-});
-app.get('/carrito.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '../', 'carrito.html'));
-});
-app.get('/pago.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '../', 'pago.html'));
-});
-app.get('/rastreo.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '../', 'rastreo.html'));
-});
+// Rutas HTML fallback
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../', 'index.html')));
+app.get('/carrito.html', (req, res) => res.sendFile(path.join(__dirname, '../', 'carrito.html')));
+app.get('/pago.html', (req, res) => res.sendFile(path.join(__dirname, '../', 'pago.html')));
+app.get('/rastreo.html', (req, res) => res.sendFile(path.join(__dirname, '../', 'rastreo.html')));
 app.get('/pago_exito.html', (req, res) => {
     const filePath = path.join(__dirname, '../', 'pago_exito.html');
-    if (fs.existsSync(filePath)) {
-        res.sendFile(filePath);
-    } else {
-        res.redirect('/pago.html');  // Fallback si no existe
-    }
+    if (fs.existsSync(filePath)) res.sendFile(filePath);
+    else res.redirect('/pago.html');  
 });
 
-// Error handler global (al final, para capturar errores en rutas) 
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Error interno del servidor' });
 });
 
-// Manejo de rutas no encontradas (404) 
 app.use((req, res) => {
     res.status(404).json({ error: 'Ruta no encontrada' });
 });
 
+// PRUEBAS DE ENTORNO LIMPIAS
+console.log('🔍 Variables de entorno iniciales:');
+console.log('DB_HOST:', process.env.DB_HOST || process.env.MYSQLHOST);
+console.log('DB_USER:', (process.env.DB_USER || process.env.MYSQLUSER) ? 'OK' : 'FALTA');
+console.log('DB_NAME:', process.env.DB_NAME || process.env.MYSQLDATABASE);
+
 // Inicializa pool y empieza server 
 async function startServer() {
     await initDbPool();
-    app.listen(PORT, () => {
-        console.log(`Servidor Express corriendo en http://localhost:${PORT}`);
-        console.log('Paths ajustados: Server en jgstore-backend/, frontend servido desde root JGStore/.');
-        console.log('Frontend servido desde root (e.g., http://localhost:3000/index.html, /carrito.html)');
-        console.log('APIs disponibles:');
-        console.log('  - GET /api/products (productos)');
-        console.log('  - POST /api/auth/login (autenticación)');
-        console.log('  - GET /api/test-db (prueba DB)');
-        console.log('  - POST /api/cart/agregar (añadir a carrito – via cartRoutes.js)');
-        console.log('  - POST /api/cart/remover (quitar de carrito)');
-        console.log('  - GET /api/cart/obtener (cargar carrito)');
-        console.log('  - POST /api/pago/procesar (procesar pago con factura y tracking – via pagoRoutes.js)');
-        console.log('  - GET /api/order/rastreo?codigo=TRK-... (detalles de rastreo – via orderRoutes.js)');
-        console.log('  - PDFs: /facturas/factura_*.pdf');
+    // AÑADIDO '0.0.0.0' PARA QUE RAILWAY LO DETECTE CORRECTAMENTE
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Servidor Express corriendo en el puerto ${PORT}`);
+        console.log('Paths ajustados: Frontend servido desde root JGStore/.');
     });
 }
 
 startServer().catch(error => {
     console.error('Error iniciando server:', error);
-    process.exit(1);
-
-
-console.log('🔍 Variables de entorno:');
-console.log('DB_HOST:', process.env.DB_HOST);
-console.log('DB_USER:', process.env.DB_USER ? 'OK' : 'FALTA');
-console.log('DB_NAME:', process.env.DB_NAME);
-
-// Test conexión inmediata
-const testConnection = async () => {
-    try {
-        const connection = await pool.getConnection();
-        console.log('✅ Conexión MySQL EXITOSA');
-        connection.release();
-    } catch (error) {
-        console.error('❌ Error MySQL:', error.message);
-    }
-};
-testConnection();
-
-
 });
