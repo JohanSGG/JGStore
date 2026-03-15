@@ -15,12 +15,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Configuración de BD unificada
+// Configuración de BD unificada (Prioridad a Railway Interno)
 const dbConfig = {
-    host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
-    user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
-    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '', 
-    database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'jgstore_db',
-    port: parseInt(process.env.DB_PORT || process.env.MYSQLPORT || 30739), // Forzamos el puerto de Railway
+    host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+    user: process.env.MYSQLUSER || process.env.DB_USER || 'root',
+    password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '', 
+    database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'jgstore_db',
+    port: parseInt(process.env.MYSQLPORT || process.env.DB_PORT || 3306), 
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
