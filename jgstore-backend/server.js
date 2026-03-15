@@ -15,16 +15,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Configuración de BD desde .env (para initDbPool si needed) – Unificado a DB_PASSWORD
+// Configuración de BD desde .env o Railway Automático
 const dbConfig = {
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',  // DB_PASSWORD para coincidir con config/db.js
-    database: process.env.DB_NAME || 'jgstore_db',
-    port: process.env.DB_PORT || 3306,
+    host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
+    user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
+    password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '',
+    database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'jgstore_db',
+    port: parseInt(process.env.DB_PORT || process.env.MYSQLPORT || 3306),
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 };
+
+console.log(`[server.js] Configuración DB -> Host: ${dbConfig.host} | Puerto: ${dbConfig.port}`);
 
 // Inicializa pool de conexiones MySQL (si no usas el importado de config/db) – Tu código intacto
 let dbPool;
